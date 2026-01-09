@@ -51,20 +51,37 @@ class Database:
     
     def initialize(self) -> None:
         """Create database and tables if they don't exist."""
-        # Ensure directory exists
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        # Ensure directory exists with proper permissions
+        try:
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        except PermissionError:
+            logger.warning(f"Cannot create directory {self.db_path.parent}, using /tmp")
+            self.db_path = Path("/tmp/unraid_monitor.db")
         
-        self._conn = sqlite3.connect(
-            str(self.db_path),
-            check_same_thread=False,
-            timeout=10.0,
-        )
-        self._conn.row_factory = sqlite3.Row
-        
-        self._create_tables()
-        self._ensure_defaults()
-        
-        logger.info(f"Database initialized at {self.db_path}")
+        try:
+            self._conn = sqlite3.connect(
+                str(self.db_path),
+                check_same_thread=False,
+                timeout=10.0,
+            )
+            self._conn.row_factory = sqlite3.Row
+            
+            self._create_tables()
+            self._ensure_defaults()
+            
+            logger.info(f"Database initialized at {self.db_path}")
+        except sqlite3.OperationalError as e:
+            logger.warning(f"Cannot open database at {self.db_path}: {e}, trying /tmp")
+            self.db_path = Path("/tmp/unraid_monitor.db")
+            self._conn = sqlite3.connect(
+                str(self.db_path),
+                check_same_thread=False,
+                timeout=10.0,
+            )
+            self._conn.row_factory = sqlite3.Row
+            self._create_tables()
+            self._ensure_defaults()
+            logger.info(f"Database initialized at {self.db_path} (fallback)")
     
     def close(self) -> None:
         """Close database connection."""
