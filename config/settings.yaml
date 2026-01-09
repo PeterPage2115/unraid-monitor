@@ -1,0 +1,101 @@
+# =============================================================================
+# Monitoring intervals (in seconds)
+# =============================================================================
+monitoring:
+  # How often to check system metrics (CPU, RAM, temps, disk)
+  system_interval_seconds: 300  # 5 minutes
+  
+  # How often to check Docker container status
+  docker_interval_seconds: 60  # 1 minute
+  
+  # How often to check service health (Radarr, Sonarr, etc.)
+  services_interval_seconds: 3600  # 1 hour
+
+# =============================================================================
+# Alert thresholds
+# Values are in percent (%) for CPU, RAM, Disk
+# Temperature is in Celsius (°C)
+# =============================================================================
+thresholds:
+  cpu:
+    warning: 80
+    critical: 95
+  
+  memory:
+    warning: 85
+    critical: 95
+  
+  disk:
+    warning: 80
+    critical: 95
+  
+  temperature:
+    warning: 75
+    critical: 90
+
+# =============================================================================
+# Temperature sensor filtering
+# =============================================================================
+temperature_sensors:
+  # Only monitor these sensors (CPU and NVMe)
+  whitelist:
+    - coretemp      # CPU temperature
+    - nvme          # NVMe SSD temperature
+  
+  # Blacklist is ignored when whitelist is set
+  blacklist: []
+
+# =============================================================================
+# Alert behavior settings
+# =============================================================================
+alerts:
+  # Minimum time between repeated alerts for the same issue (minutes)
+  cooldown_minutes: 30
+  
+  # Send notification when metric returns to normal
+  recovery_enabled: true
+  
+  # Require value to drop this much below threshold before recovery
+  # Prevents flapping alerts when value hovers around threshold
+  hysteresis_percent: 5
+
+# =============================================================================
+# Weekly report configuration
+# =============================================================================
+weekly_report:
+  enabled: true
+  
+  # Day of week: monday, tuesday, wednesday, thursday, friday, saturday, sunday
+  day: saturday
+  
+  # Time to send report (24-hour format)
+  hour: 12
+  minute: 0
+
+# =============================================================================
+# Docker monitoring settings
+# =============================================================================
+docker:
+  # Alert when container restarts too many times
+  monitor_restarts: true
+  
+  # Alert if container restarts more than this many times
+  restart_threshold: 3
+  
+  # ...within this time window (minutes)
+  restart_window_minutes: 60
+  
+  # Containers to ignore (by name)
+  # The monitor itself is always ignored
+  ignored_containers:
+    - unraid-monitor
+
+# =============================================================================
+# Logging configuration
+# =============================================================================
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  level: INFO
+  
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

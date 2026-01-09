@@ -1,0 +1,19 @@
+# Unraid Monitor Bot - Dependencies
+
+# Async scheduler
+apscheduler>=4.0.0a5
+
+# System metrics (host monitoring)
+psutil>=5.9.0
+
+# Docker SDK
+docker>=7.0.0
+
+# Async HTTP client
+aiohttp>=3.9.0
+
+# Configuration
+pyyaml>=6.0
+
+# Timezone support
+tzlocal>=5.0

@@ -1,0 +1,37 @@
+# Unraid Monitor - Docker Compose Configuration
+services:
+  unraid-monitor:
+    image: peterpage2115/unraid-monitor:latest
+    container_name: unraid-monitor
+    restart: unless-stopped
+    
+    environment:
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - DISCORD_USER_ID=${DISCORD_USER_ID}
+      - DISCORD_REPORT_CHANNEL_ID=${DISCORD_REPORT_CHANNEL_ID}
+      - TZ=${TZ:-Europe/Warsaw}
+      - HOST_PROC=/host/proc
+      - HOST_SYS=/host/sys
+      - RADARR_URL=${RADARR_URL}
+      - RADARR_API_KEY=${RADARR_API_KEY}
+      - SONARR_URL=${SONARR_URL}
+      - SONARR_API_KEY=${SONARR_API_KEY}
+      - IMMICH_URL=${IMMICH_URL}
+      - IMMICH_API_KEY=${IMMICH_API_KEY}
+      - JELLYFIN_URL=${JELLYFIN_URL}
+      - JELLYFIN_API_KEY=${JELLYFIN_API_KEY}
+      - QBITTORRENT_URL=${QBITTORRENT_URL}
+      - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
+      - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+    
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /mnt/user/appdata/unraid-monitor/data:/app/data
+    
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
