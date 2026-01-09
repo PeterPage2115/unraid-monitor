@@ -23,6 +23,12 @@ services:
       - QBITTORRENT_URL=${QBITTORRENT_URL}
       - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
       - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+      # Web UI settings
+      - WEB_PORT=${WEB_PORT:-8888}
+      - WEB_PASSWORD=${WEB_PASSWORD:-}
+    
+    ports:
+      - "${WEB_PORT:-8888}:8888"
     
     volumes:
       - /proc:/host/proc:ro

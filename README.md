@@ -1,6 +1,6 @@
 # 🖥️ Unraid Monitor
 
-> **Discord monitoring bot for Unraid servers**
+> **Discord monitoring bot for Unraid servers with Web UI**
 
 [![Docker Hub](https://img.shields.io/docker/pulls/peterpage2115/unraid-monitor)](https://hub.docker.com/r/peterpage2115/unraid-monitor)
 [![Docker Image Size](https://img.shields.io/docker/image-size/peterpage2115/unraid-monitor/latest)](https://hub.docker.com/r/peterpage2115/unraid-monitor)
@@ -9,11 +9,21 @@
 
 A Docker container that monitors your Unraid server and sends Discord notifications:
 
+- 🌐 **Web Dashboard** - Real-time status view and settings management
 - 📊 **Weekly reports** with full server statistics
 - 🔍 **Real-time monitoring** of CPU, RAM, disks, temperatures
 - 🐳 **Docker container status** tracking (health checks, restarts)
 - ⚠️ **Instant alerts** when thresholds are exceeded
 - 🎬 **Media service stats** from Radarr, Sonarr, Immich, Jellyfin, qBittorrent
+
+---
+
+## 🆕 What's New in v1.1.0
+
+- **Web UI Dashboard** - Access via `http://your-server:8888`
+- **SQLite Database** - Persistent settings storage
+- **Plugin Architecture** - Extensible notification system
+- **Improved Performance** - Better caching and error handling
 
 ---
 
@@ -69,6 +79,8 @@ services:
       - TZ=Europe/Warsaw
       - HOST_PROC=/host/proc
       - HOST_SYS=/host/sys
+      - WEB_PORT=8888
+      - WEB_PASSWORD=${WEB_PASSWORD:-}
       - RADARR_URL=${RADARR_URL}
       - RADARR_API_KEY=${RADARR_API_KEY}
       - SONARR_URL=${SONARR_URL}
@@ -80,6 +92,8 @@ services:
       - QBITTORRENT_URL=${QBITTORRENT_URL}
       - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
       - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+    ports:
+      - "8888:8888"  # Web UI
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -97,6 +111,10 @@ services:
 ```bash
 docker-compose up -d
 ```
+
+### 5. Access Web UI
+
+Open `http://YOUR_UNRAID_IP:8888` in your browser.
 
 ---
 
@@ -134,6 +152,8 @@ All settings are built into the Docker image with sensible defaults. No configur
 | `DISCORD_WEBHOOK_URL` | ✅ | Discord webhook URL |
 | `DISCORD_USER_ID` | ❌ | Your Discord ID for @mentions on critical alerts |
 | `TZ` | ❌ | Timezone (default: `Europe/Warsaw`) |
+| `WEB_PORT` | ❌ | Web UI port (default: `8888`) |
+| `WEB_PASSWORD` | ❌ | Optional password for Web UI |
 | `RADARR_URL` | ❌ | Radarr URL (e.g., `http://192.168.1.100:7878`) |
 | `RADARR_API_KEY` | ❌ | Radarr API key |
 | `SONARR_URL` | ❌ | Sonarr URL |
@@ -145,6 +165,19 @@ All settings are built into the Docker image with sensible defaults. No configur
 | `QBITTORRENT_URL` | ❌ | qBittorrent URL |
 | `QBITTORRENT_USERNAME` | ❌ | qBittorrent username |
 | `QBITTORRENT_PASSWORD` | ❌ | qBittorrent password |
+
+---
+
+## 🌐 Web UI
+
+The Web Dashboard provides:
+
+- **Real-time Status** - CPU, RAM, Disk, Temperature at a glance
+- **Docker Overview** - Container status with health indicators
+- **Service Status** - Connection status to configured services
+- **Settings Management** - Adjust thresholds without container restart
+- **Actions** - Send test notifications, trigger reports manually
+- **Alert History** - View recent alerts and their status
 
 ---
 
@@ -177,10 +210,14 @@ unraid-monitor/
 ├── src/
 │   ├── main.py              # Application entry point
 │   ├── config.py            # Configuration management
-│   ├── discord_client.py    # Discord webhook client
+│   ├── discord_client.py    # Discord webhook client (facade)
 │   ├── alerts/              # Alert system
 │   ├── monitors/            # System & Docker monitors
 │   │   └── services/        # Service clients (Radarr, etc.)
+│   ├── notifications/       # Notification providers (Discord, etc.)
+│   ├── database/            # SQLite settings storage
+│   ├── web/                 # FastAPI Web UI
+│   │   └── templates/       # HTML templates
 │   └── reports/             # Weekly report generator
 ├── config/
 │   └── settings.yaml        # Default settings
