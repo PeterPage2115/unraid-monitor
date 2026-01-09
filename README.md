@@ -1,24 +1,27 @@
-#  Unraid Monitor
+# 🖥️ Unraid Monitor
 
-**Discord monitoring bot for Unraid servers**
+> **Discord monitoring bot for Unraid servers**
 
 [![Docker Hub](https://img.shields.io/docker/pulls/peterpage2115/unraid-monitor)](https://hub.docker.com/r/peterpage2115/unraid-monitor)
 [![Docker Image Size](https://img.shields.io/docker/image-size/peterpage2115/unraid-monitor/latest)](https://hub.docker.com/r/peterpage2115/unraid-monitor)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A Docker container that monitors your Unraid server and sends Discord notifications:
--  **Weekly reports** with full server statistics
--  **Real-time monitoring** of CPU, RAM, disks, temperatures
--  **Docker container status** tracking (health checks, restarts)
--  **Instant alerts** when thresholds are exceeded
--  **Media service stats** from Radarr, Sonarr, Immich, Jellyfin, qBittorrent
+
+- 📊 **Weekly reports** with full server statistics
+- 🔍 **Real-time monitoring** of CPU, RAM, disks, temperatures
+- 🐳 **Docker container status** tracking (health checks, restarts)
+- ⚠️ **Instant alerts** when thresholds are exceeded
+- 🎬 **Media service stats** from Radarr, Sonarr, Immich, Jellyfin, qBittorrent
 
 ---
 
-##  Quick Start
+## 🚀 Quick Start
 
 ### 1. Create Discord Webhook
 
-1. Go to your Discord server  Settings  Integrations  Webhooks
+1. Go to your Discord server → **Settings** → **Integrations** → **Webhooks**
 2. Click "New Webhook" and copy the URL
 
 ### 2. Create `.env` file
@@ -97,15 +100,16 @@ docker-compose up -d
 
 ---
 
-##  Features
+## ✨ Features
 
 ### Alert Thresholds (defaults)
-| Metric | Warning | Critical |
-|--------|---------|----------|
+
+| Metric | ⚠️ Warning | 🔴 Critical |
+|--------|------------|-------------|
 | CPU | 80% | 95% |
 | RAM | 85% | 95% |
 | Disk | 80% | 95% |
-| Temperature | 75C | 90C |
+| Temperature | 75°C | 90°C |
 
 ### Temperature Sensors
 By default, only **CPU (coretemp)** and **NVMe** sensors are monitored. Motherboard sensors (AUXTIN, SYSTIN) that often show incorrect values are filtered out.
@@ -119,81 +123,81 @@ Sent every **Sunday at 9:00 AM** (configurable) with:
 
 ---
 
-##  Configuration
+## ⚙️ Configuration
 
 All settings are built into the Docker image with sensible defaults. No configuration files needed!
 
 ### Environment Variables
 
 | Variable | Required | Description |
-|----------|----------|-------------|
-| `DISCORD_WEBHOOK_URL` |  | Discord webhook URL |
-| `DISCORD_USER_ID` |  | Your Discord ID for @mentions on critical alerts |
-| `TZ` |  | Timezone (default: Europe/Warsaw) |
-| `RADARR_URL` |  | Radarr URL (e.g., http://192.168.1.100:7878) |
-| `RADARR_API_KEY` |  | Radarr API key |
-| `SONARR_URL` |  | Sonarr URL |
-| `SONARR_API_KEY` |  | Sonarr API key |
-| `JELLYFIN_URL` |  | Jellyfin URL |
-| `JELLYFIN_API_KEY` |  | Jellyfin API key |
-| `IMMICH_URL` |  | Immich URL |
-| `IMMICH_API_KEY` |  | Immich API key |
-| `QBITTORRENT_URL` |  | qBittorrent URL |
-| `QBITTORRENT_USERNAME` |  | qBittorrent username |
-| `QBITTORRENT_PASSWORD` |  | qBittorrent password |
+|----------|:--------:|-------------|
+| `DISCORD_WEBHOOK_URL` | ✅ | Discord webhook URL |
+| `DISCORD_USER_ID` | ❌ | Your Discord ID for @mentions on critical alerts |
+| `TZ` | ❌ | Timezone (default: `Europe/Warsaw`) |
+| `RADARR_URL` | ❌ | Radarr URL (e.g., `http://192.168.1.100:7878`) |
+| `RADARR_API_KEY` | ❌ | Radarr API key |
+| `SONARR_URL` | ❌ | Sonarr URL |
+| `SONARR_API_KEY` | ❌ | Sonarr API key |
+| `JELLYFIN_URL` | ❌ | Jellyfin URL |
+| `JELLYFIN_API_KEY` | ❌ | Jellyfin API key |
+| `IMMICH_URL` | ❌ | Immich URL |
+| `IMMICH_API_KEY` | ❌ | Immich API key |
+| `QBITTORRENT_URL` | ❌ | qBittorrent URL |
+| `QBITTORRENT_USERNAME` | ❌ | qBittorrent username |
+| `QBITTORRENT_PASSWORD` | ❌ | qBittorrent password |
 
 ---
 
-##  Getting API Keys
+## 🔑 Getting API Keys
 
 ### Discord Webhook
-Server Settings  Integrations  Webhooks  New Webhook  Copy URL
+**Server Settings** → **Integrations** → **Webhooks** → **New Webhook** → **Copy URL**
 
 ### Discord User ID
-Enable Developer Mode  Right-click your name  Copy User ID
+**Enable Developer Mode** → **Right-click your name** → **Copy User ID**
 
 ### Radarr / Sonarr
-Settings  General  API Key
+**Settings** → **General** → **API Key**
 
 ### Jellyfin
-Dashboard  API Keys  Add
+**Dashboard** → **API Keys** → **Add**
 
 ### Immich
-Account Settings  API Keys  New API Key
+**Account Settings** → **API Keys** → **New API Key**
 
 ### qBittorrent
-Just use your login credentials
+Just use your login credentials.
 
 ---
 
-##  Project Structure
+## 📁 Project Structure
 
 ```
 unraid-monitor/
- src/
-    main.py              # Application entry point
-    config.py            # Configuration management
-    discord_client.py    # Discord webhook client
-    alerts/              # Alert system
-    monitors/            # System & Docker monitors
-       services/        # Service clients (Radarr, etc.)
-    reports/             # Weekly report generator
- config/
-    settings.yaml        # Default settings
- Dockerfile
- docker-compose.yml
- requirements.txt
- README.md
+├── src/
+│   ├── main.py              # Application entry point
+│   ├── config.py            # Configuration management
+│   ├── discord_client.py    # Discord webhook client
+│   ├── alerts/              # Alert system
+│   ├── monitors/            # System & Docker monitors
+│   │   └── services/        # Service clients (Radarr, etc.)
+│   └── reports/             # Weekly report generator
+├── config/
+│   └── settings.yaml        # Default settings
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-##  License
+## 📜 License
 
 MIT License - feel free to use and modify!
 
 ---
 
-##  Contributing
+## 🤝 Contributing
 
 Pull requests are welcome! For major changes, please open an issue first.
