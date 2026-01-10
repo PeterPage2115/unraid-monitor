@@ -58,14 +58,31 @@ class AlertManager:
         # State storage
         self._states: dict[str, AlertState] = {}
         
-        # Persistence
+        # Persistence - with fallback to /tmp if /app/data is not writable
         if state_file:
             self.state_file = Path(state_file)
         else:
             self.state_file = Path("/app/data/alert_state.json")
         
+        # Test if we can write to state_file location
+        self._ensure_writable_state_file()
+        
         # Load existing state if available
         self._load_state()
+    
+    def _ensure_writable_state_file(self) -> None:
+        """Ensure we can write to the state file, fallback to /tmp if not."""
+        try:
+            self.state_file.parent.mkdir(parents=True, exist_ok=True)
+            # Test write
+            test_file = self.state_file.parent / ".write_test"
+            test_file.touch()
+            test_file.unlink()
+            logger.debug(f"State file location writable: {self.state_file}")
+        except (PermissionError, OSError) as e:
+            old_path = self.state_file
+            self.state_file = Path("/tmp/alert_state.json")
+            logger.warning(f"Cannot write to {old_path}: {e}, using {self.state_file}")
     
     # =========================================================================
     # State management

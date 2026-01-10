@@ -59,12 +59,12 @@ ENV HOST_PROC=/host/proc
 ENV HOST_SYS=/host/sys
 ENV TZ=Europe/Warsaw
 
-# Switch to non-root user
-USER appuser
+# Note: Running as root for Docker socket access
+# This is standard for Unraid containers that need Docker monitoring
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD python -c "import sys; sys.exit(0)"
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8888/health', timeout=5)" || exit 1
 
 # Working directory for running
 WORKDIR /app/src
