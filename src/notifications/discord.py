@@ -24,6 +24,9 @@ logger = logging.getLogger(__name__)
 # Constants
 # =============================================================================
 
+VERSION = "1.1.2"
+
+
 class EmbedColor(Enum):
     """Discord embed colors for different alert levels."""
     INFO = 0x3498DB       # Blue
@@ -302,7 +305,7 @@ class DiscordProvider(NotificationProvider):
             color=EmbedColor.SUCCESS,
             fields=[
                 {"name": "Status", "value": "Online", "inline": True},
-                {"name": "Version", "value": "2.0.0", "inline": True},
+                {"name": "Version", "value": VERSION, "inline": True},
             ],
             footer="Unraid Monitor",
         )
