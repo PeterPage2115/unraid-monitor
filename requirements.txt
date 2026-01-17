@@ -16,7 +16,7 @@ psutil==6.1.1
 docker==7.1.0
 
 # Async HTTP client
-aiohttp==3.11.11
+aiohttp==3.13.3
 
 # Configuration
 pyyaml==6.0.2
