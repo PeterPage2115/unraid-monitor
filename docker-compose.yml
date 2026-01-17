@@ -30,6 +30,11 @@ services:
     ports:
       - "${WEB_PORT:-8888}:8888"
     
+    # Add docker group for socket access
+    # Note: Adjust GID to match your host's docker group (usually 999 or check with: getent group docker)
+    group_add:
+      - "999"  # docker group GID - adjust if different on your host
+    
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro

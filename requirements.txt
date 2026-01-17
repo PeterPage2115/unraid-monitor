@@ -1,25 +1,32 @@
 # Unraid Monitor Bot - Dependencies
 
 # Web UI
-fastapi>=0.109.0
-uvicorn[standard]>=0.27.0
-jinja2>=3.1.0
-python-multipart>=0.0.6
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+jinja2==3.1.5
+python-multipart==0.0.20
 
-# Async scheduler
-apscheduler>=4.0.0a5
+# Async scheduler (stable version)
+apscheduler==3.11.2
 
 # System metrics (host monitoring)
-psutil>=5.9.0
+psutil==6.1.1
 
 # Docker SDK
-docker>=7.0.0
+docker==7.1.0
 
 # Async HTTP client
-aiohttp>=3.9.0
+aiohttp==3.11.11
 
 # Configuration
-pyyaml>=6.0
+pyyaml==6.0.2
 
 # Timezone support
-tzlocal>=5.0
+tzlocal==5.2
+
+# Password hashing
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1  # passlib 1.7.4 requires bcrypt <5.0
+
+# Database
+sqlalchemy==2.0.36

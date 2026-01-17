@@ -1,0 +1,173 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[BUG] "
+labels: ["bug", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! 🐛
+        
+        Please fill out the sections below to help us identify and fix the issue.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify these before submitting
+      options:
+        - label: I have searched existing issues and this is not a duplicate
+          required: true
+        - label: I am using the latest version of Unraid Monitor
+          required: true
+        - label: I have checked the documentation and my configuration is correct
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: "Example: The system monitor crashes when CPU usage exceeds 100%..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: "Example: The monitor should continue running and report CPU usage correctly..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: "Example: The container crashed with KeyError exception..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the issue
+      placeholder: |
+        1. Start Unraid Monitor with default config
+        2. Run stress test: `stress --cpu 4`
+        3. Wait for system check cycle
+        4. Observer crash in logs
+    validations:
+      required: true
+
+  - type: input
+    id: unraid-version
+    attributes:
+      label: Unraid Version
+      description: Which version of Unraid are you running?
+      placeholder: "Example: 7.2.3"
+    validations:
+      required: true
+
+  - type: input
+    id: monitor-version
+    attributes:
+      label: Unraid Monitor Version
+      description: Which version/tag of the Docker image are you using?
+      placeholder: "Example: 1.0.0 or latest"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform Architecture
+      description: What hardware architecture are you running on?
+      options:
+        - x86_64 (amd64)
+        - ARM64 (aarch64)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Paste relevant logs from `docker logs unraid-monitor`
+      placeholder: |
+        2026-01-17 10:30:45 ERROR [system_monitor] Failed to read CPU stats
+        Traceback (most recent call last):
+          File "monitors/system.py", line 123, in check
+            cpu_percent = psutil.cpu_percent()
+        KeyError: 'cpu'
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: |
+        Relevant parts of your `settings.yaml` or docker-compose.yml
+        **⚠️ IMPORTANT: Remove sensitive data (API keys, webhooks, passwords) before pasting!**
+      placeholder: |
+        monitoring:
+          system:
+            enabled: true
+            check_interval_seconds: 300
+          thresholds:
+            cpu_percent: 80
+        
+        # docker-compose.yml excerpt:
+        environment:
+          - TZ=America/New_York
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      render: yaml
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Additional Environment Info
+      description: Any other relevant system information
+      placeholder: |
+        - Docker version: 24.0.7
+        - Number of containers: 25
+        - Available RAM: 32GB
+        - Disk setup: 2x 4TB in RAID1
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or information about the problem
+      placeholder: "Example: This started happening after I added Immich monitoring..."
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this issue for you?
+      options:
+        - Critical (monitor completely broken)
+        - High (major feature not working)
+        - Medium (minor feature broken)
+        - Low (cosmetic issue)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: workaround
+    attributes:
+      label: Workaround Available?
+      description: Have you found a temporary workaround?
+      options:
+        - label: Yes, I have found a workaround (described in Additional Context)
+        - label: No workaround found

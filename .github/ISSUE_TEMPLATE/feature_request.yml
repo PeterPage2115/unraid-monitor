@@ -1,0 +1,168 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE] "
+labels: ["enhancement", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! 💡
+        
+        Please help us understand your idea by filling out the sections below.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify these before submitting
+      options:
+        - label: I have searched existing issues and this feature has not been requested
+          required: true
+        - label: I have checked the roadmap (ROADMAP.md) and this is not already planned
+          required: true
+        - label: This feature aligns with the project's homelab-first focus
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? Why is it needed?
+      placeholder: |
+        Example: "As a homelab user with a UPS, I want to monitor battery status 
+        so I can be alerted when power fails before my servers shut down..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How should this feature work? Be as detailed as possible.
+      placeholder: |
+        Example: "Add a new UPS monitor that connects to Network UPS Tools (NUT) daemon:
+        - Monitor battery charge percentage
+        - Alert when on battery power
+        - Alert when battery low (< 20%)
+        - Include UPS status in weekly reports
+        - Configuration in settings.yaml under 'monitoring.ups'"
+    validations:
+      required: true
+
+  - type: textarea
+    id: usecase
+    attributes:
+      label: Use Case
+      description: Who would benefit from this feature? How would it be used?
+      placeholder: |
+        Example: "Homelab users with UPS units (APC, CyberPower, etc.) running 
+        NUT server. Common in server racks to protect against power outages.
+        Estimated audience: 40-50% of Unraid users have UPS."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered other approaches or workarounds?
+      placeholder: |
+        Example: "Could use a plugin (Phase 3 roadmap), but built-in support 
+        would be better UX. Alternatively, could monitor via external script 
+        but that's less integrated."
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What type of feature is this?
+      options:
+        - New Monitor (system/hardware monitoring)
+        - New Service Integration (Radarr, Sonarr, etc.)
+        - New Notification Provider (Telegram, Slack, Email)
+        - Web UI Enhancement
+        - Alerting Logic Improvement
+        - Configuration/Setup Enhancement
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - High (would significantly improve my workflow)
+        - Medium (nice to have)
+        - Low (minor improvement)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: implementation
+    attributes:
+      label: Implementation Willingness
+      description: Are you willing to help implement this feature?
+      options:
+        - Yes, I can submit a PR
+        - Yes, but I need guidance
+        - No, but I can test it
+        - No, just requesting
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Mockups / Examples
+      description: |
+        If applicable, provide mockups, screenshots, or examples from other tools.
+        You can drag and drop images here.
+      placeholder: "Drag images here or paste URLs to examples..."
+
+  - type: textarea
+    id: technical
+    attributes:
+      label: Technical Considerations
+      description: Any technical details, APIs, libraries, or dependencies needed?
+      placeholder: |
+        Example: "Would require 'pynut2' library for NUT communication.
+        API docs: https://networkupstools.org/
+        Most UPS units expose data on localhost:3493 by default."
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration Example
+      description: If applicable, show how this feature would be configured
+      placeholder: |
+        monitoring:
+          ups:
+            enabled: true
+            check_interval_seconds: 60
+            host: localhost
+            port: 3493
+            ups_name: ups
+            alert_on_battery: true
+            alert_battery_low_percent: 20
+      render: yaml
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information, links, or context about the feature
+      placeholder: "Example: Related to issue #42, discussed in Discord..."
+
+  - type: checkboxes
+    id: breaking
+    attributes:
+      label: Breaking Changes
+      description: Would this feature require breaking changes?
+      options:
+        - label: This feature would require breaking changes to existing configuration
+        - label: This feature is backwards compatible

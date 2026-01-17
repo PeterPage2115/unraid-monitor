@@ -20,8 +20,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-# APScheduler imports
-from apscheduler import AsyncScheduler
+# APScheduler imports (stable 3.x)
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.triggers.cron import CronTrigger
 
@@ -55,7 +55,7 @@ class UnraidMonitor:
     def __init__(self, config: Config):
         self.config = config
         self._running = False
-        self._scheduler: AsyncScheduler | None = None
+        self._scheduler: AsyncIOScheduler | None = None
         self._web_task: asyncio.Task | None = None
         
         # Initialize Database
@@ -252,68 +252,75 @@ class UnraidMonitor:
         # Send startup notification
         await self.discord.send_startup_message()
         
-        # Create scheduler
-        async with AsyncScheduler() as scheduler:
-            self._scheduler = scheduler
+        # Create scheduler (APScheduler 3.x stable)
+        self._scheduler = AsyncIOScheduler()
+        
+        # Schedule system monitoring
+        self._scheduler.add_job(
+            self._run_system_check,
+            IntervalTrigger(seconds=self.config.monitoring.system_interval_seconds),
+            id="system_monitor",
+        )
+        logger.info(f"System monitor scheduled every {self.config.monitoring.system_interval_seconds}s")
+        
+        # Schedule Docker monitoring
+        self._scheduler.add_job(
+            self._run_docker_check,
+            IntervalTrigger(seconds=self.config.monitoring.docker_interval_seconds),
+            id="docker_monitor",
+        )
+        logger.info(f"Docker monitor scheduled every {self.config.monitoring.docker_interval_seconds}s")
+        
+        # Schedule weekly report
+        if self.config.weekly_report.enabled:
+            # Map day name to cron day_of_week
+            day_map = {
+                "monday": "mon",
+                "tuesday": "tue",
+                "wednesday": "wed",
+                "thursday": "thu",
+                "friday": "fri",
+                "saturday": "sat",
+                "sunday": "sun",
+            }
+            day = day_map.get(self.config.weekly_report.day.lower(), "sun")
             
-            # Schedule system monitoring
-            await scheduler.add_schedule(
-                self._run_system_check,
-                IntervalTrigger(seconds=self.config.monitoring.system_interval_seconds),
-                id="system_monitor",
+            self._scheduler.add_job(
+                self._run_weekly_report,
+                CronTrigger(
+                    day_of_week=day,
+                    hour=self.config.weekly_report.hour,
+                    minute=self.config.weekly_report.minute,
+                ),
+                id="weekly_report",
             )
-            logger.info(f"System monitor scheduled every {self.config.monitoring.system_interval_seconds}s")
-            
-            # Schedule Docker monitoring
-            await scheduler.add_schedule(
-                self._run_docker_check,
-                IntervalTrigger(seconds=self.config.monitoring.docker_interval_seconds),
-                id="docker_monitor",
+            logger.info(
+                f"Weekly report scheduled for {self.config.weekly_report.day} "
+                f"at {self.config.weekly_report.hour:02d}:{self.config.weekly_report.minute:02d}"
             )
-            logger.info(f"Docker monitor scheduled every {self.config.monitoring.docker_interval_seconds}s")
-            
-            # Schedule weekly report
-            if self.config.weekly_report.enabled:
-                # Map day name to cron day_of_week
-                day_map = {
-                    "monday": "mon",
-                    "tuesday": "tue",
-                    "wednesday": "wed",
-                    "thursday": "thu",
-                    "friday": "fri",
-                    "saturday": "sat",
-                    "sunday": "sun",
-                }
-                day = day_map.get(self.config.weekly_report.day.lower(), "sun")
-                
-                await scheduler.add_schedule(
-                    self._run_weekly_report,
-                    CronTrigger(
-                        day_of_week=day,
-                        hour=self.config.weekly_report.hour,
-                        minute=self.config.weekly_report.minute,
-                    ),
-                    id="weekly_report",
-                )
-                logger.info(
-                    f"Weekly report scheduled for {self.config.weekly_report.day} "
-                    f"at {self.config.weekly_report.hour:02d}:{self.config.weekly_report.minute:02d}"
-                )
-            
-            # Run initial checks
-            logger.info("Running initial checks...")
-            await self._run_system_check()
-            await self._run_docker_check()
-            
-            logger.info("Unraid Monitor is running. Press Ctrl+C to stop.")
-            
-            # Run scheduler until stopped
-            await scheduler.run_until_stopped()
+        
+        # Run initial checks
+        logger.info("Running initial checks...")
+        await self._run_system_check()
+        await self._run_docker_check()
+        
+        # Start scheduler
+        self._scheduler.start()
+        logger.info("Unraid Monitor is running. Press Ctrl+C to stop.")
+        
+        # Keep running until stopped
+        while self._running:
+            await asyncio.sleep(1)
     
     async def stop(self) -> None:
         """Stop the monitor gracefully."""
         logger.info("Stopping Unraid Monitor...")
         self._running = False
+        
+        # Stop scheduler
+        if self._scheduler and self._scheduler.running:
+            self._scheduler.shutdown(wait=False)
+            logger.info("Scheduler stopped")
         
         # Stop Web UI
         if self._web_task and not self._web_task.done():
@@ -411,8 +418,8 @@ async def main() -> None:
     
     def signal_handler(sig):
         logger.info(f"Received signal {sig}, shutting down...")
+        # Don't call loop.stop() - let monitor.stop() complete gracefully
         asyncio.create_task(monitor.stop())
-        loop.stop()
     
     # Register signal handlers
     for sig in (signal.SIGTERM, signal.SIGINT):

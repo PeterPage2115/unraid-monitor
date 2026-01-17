@@ -62,10 +62,30 @@ IMMICH_API_KEY=
 QBITTORRENT_URL=http://YOUR_IP:8080
 QBITTORRENT_USERNAME=admin
 QBITTORRENT_PASSWORD=
+
+# Optional - Web UI Password (bcrypt hash)
+WEB_PASSWORD=
 EOF
 ```
 
-### 3. Create `docker-compose.yml`
+### 3. (Optional) Generate Web UI Password
+
+For secure access to the Web UI dashboard, generate a password hash:
+
+```bash
+# Generate password hash
+python generate_password.py
+
+# Or use Docker:
+docker run --rm peterpage2115/unraid-monitor python generate_password.py
+
+# Add the generated hash to your .env file:
+# WEB_PASSWORD=$2b$12$abcd1234...
+```
+
+**Note:** If `WEB_PASSWORD` is not set, the Web UI will be accessible without authentication (not recommended for internet-exposed servers).
+
+### 4. Create `docker-compose.yml`
 
 ```yaml
 services:
@@ -105,6 +125,12 @@ services:
         max-size: 10m
         max-file: "3"
 ```
+
+**Note on Docker Socket Permissions:**
+The container runs as a non-root user (UID 1000) with docker group membership (GID 999). For Docker monitoring to work:
+- The Docker socket must be readable by the docker group
+- On most systems this is already configured: `ls -l /var/run/docker.sock` should show `srw-rw---- root docker`
+- If you encounter permission errors, ensure the socket has group read/write: `sudo chmod 660 /var/run/docker.sock`
 
 ### 4. Run
 

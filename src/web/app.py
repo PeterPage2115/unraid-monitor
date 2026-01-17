@@ -17,6 +17,8 @@ from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from passlib.context import CryptContext
 import uvicorn
 
 if TYPE_CHECKING:
@@ -25,6 +27,12 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger(__name__)
+
+# Password hashing context (bcrypt)
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# HTTP Basic Auth
+security = HTTPBasic()
 
 # Path to templates directory
 TEMPLATES_DIR = Path(__file__).parent / "templates"
@@ -138,12 +146,41 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
             raise HTTPException(500, "Web UI not initialized")
         return app.state.web_ui
     
+    def verify_auth(
+        credentials: HTTPBasicCredentials = Depends(security),
+        ui: WebUI = Depends(get_web_ui)
+    ) -> bool:
+        """
+        Verify HTTP Basic Auth credentials.
+        
+        If password is configured, validates using bcrypt hash comparison.
+        If no password configured, allows access.
+        """
+        # If no password configured, allow access
+        if not ui.password:
+            return True
+        
+        # Verify password hash
+        is_valid = pwd_context.verify(credentials.password, ui.password)
+        
+        if not is_valid:
+            raise HTTPException(
+                status_code=401,
+                detail="Incorrect username or password",
+                headers={"WWW-Authenticate": "Basic"},
+            )
+        
+        return True
+    
     # =========================================================================
     # Dashboard Page
     # =========================================================================
     
     @app.get("/", response_class=HTMLResponse)
-    async def dashboard(request: Request):
+    async def dashboard(
+        request: Request,
+        authenticated: bool = Depends(verify_auth)
+    ):
         """Serve the main dashboard page."""
         return templates.TemplateResponse(
             "dashboard.html",
@@ -155,7 +192,10 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
     # =========================================================================
     
     @app.get("/api/status")
-    async def get_status(ui: WebUI = Depends(get_web_ui)) -> dict:
+    async def get_status(
+        ui: WebUI = Depends(get_web_ui),
+        authenticated: bool = Depends(verify_auth)
+    ) -> dict:
         """Get current system status."""
         result = {
             "timestamp": datetime.now().isoformat(),
@@ -180,7 +220,10 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
         return result
     
     @app.get("/api/services")
-    async def get_services(ui: WebUI = Depends(get_web_ui)) -> dict:
+    async def get_services(
+        ui: WebUI = Depends(get_web_ui),
+        authenticated: bool = Depends(verify_auth)
+    ) -> dict:
         """Get service connection status."""
         if ui.get_services_status:
             try:
@@ -195,7 +238,10 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
     # =========================================================================
     
     @app.get("/api/settings")
-    async def get_settings(ui: WebUI = Depends(get_web_ui)) -> dict:
+    async def get_settings(
+        ui: WebUI = Depends(get_web_ui),
+        authenticated: bool = Depends(verify_auth)
+    ) -> dict:
         """Get current settings."""
         settings = ui.db.get_settings()
         return settings.to_dict()
@@ -203,7 +249,8 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
     @app.post("/api/settings")
     async def save_settings(
         request: Request,
-        ui: WebUI = Depends(get_web_ui)
+        ui: WebUI = Depends(get_web_ui),
+        authenticated: bool = Depends(verify_auth)
     ) -> dict:
         """Update settings."""
         data = await request.json()
@@ -241,7 +288,10 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
     # =========================================================================
     
     @app.post("/api/test")
-    async def send_test(ui: WebUI = Depends(get_web_ui)) -> dict:
+    async def send_test(
+        ui: WebUI = Depends(get_web_ui),
+        authenticated: bool = Depends(verify_auth)
+    ) -> dict:
         """Send a test notification."""
         try:
             if ui.send_test_notification:
@@ -257,7 +307,10 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
             raise HTTPException(500, str(e))
     
     @app.post("/api/report")
-    async def force_report(ui: WebUI = Depends(get_web_ui)) -> dict:
+    async def force_report(
+        ui: WebUI = Depends(get_web_ui),
+        authenticated: bool = Depends(verify_auth)
+    ) -> dict:
         """Trigger weekly report immediately."""
         if ui.trigger_report:
             try:
@@ -284,7 +337,8 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
     @app.get("/api/alerts")
     async def get_alerts(
         limit: int = 50,
-        ui: WebUI = Depends(get_web_ui)
+        ui: WebUI = Depends(get_web_ui),
+        authenticated: bool = Depends(verify_auth)
     ) -> list:
         """Get recent alerts."""
         alerts = ui.db.get_recent_alerts(limit)
@@ -293,7 +347,8 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
     @app.get("/api/alerts/stats")
     async def get_alert_stats(
         days: int = 7,
-        ui: WebUI = Depends(get_web_ui)
+        ui: WebUI = Depends(get_web_ui),
+        authenticated: bool = Depends(verify_auth)
     ) -> dict:
         """Get alert statistics."""
         return ui.db.get_alert_stats(days)

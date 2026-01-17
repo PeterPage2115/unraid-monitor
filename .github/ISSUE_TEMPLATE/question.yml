@@ -1,0 +1,78 @@
+name: Question / Support
+description: Ask a question or get help using Unraid Monitor
+title: "[QUESTION] "
+labels: ["question"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Need help? Ask away! 💬
+        
+        **Before asking:**
+        - Check the [README](../README.md) for setup instructions
+        - Search [existing discussions](https://github.com/yourusername/unraid-monitor/discussions)
+        - Try asking in [Discord #support](#) for faster responses
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What do you need help with?
+      placeholder: "Example: How do I configure multiple webhooks for different alert severities?"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      description: What is your question about?
+      options:
+        - Installation / Setup
+        - Configuration
+        - Alert Tuning
+        - Service Integration (Radarr, Sonarr, etc.)
+        - Web UI Usage
+        - Docker / Compose
+        - Troubleshooting
+        - Feature Usage
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any additional information that might help us answer your question
+      placeholder: |
+        - What have you already tried?
+        - What documentation have you read?
+        - Any error messages or unexpected behavior?
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Relevant Configuration (if applicable)
+      description: |
+        Paste relevant parts of your config
+        **⚠️ Remove sensitive data (API keys, webhooks, passwords)**
+      placeholder: |
+        monitoring:
+          docker:
+            enabled: true
+            check_interval_seconds: 60
+      render: yaml
+
+  - type: checkboxes
+    id: help
+    attributes:
+      label: How can we help?
+      options:
+        - label: Explanation of how a feature works
+        - label: Help with configuration
+        - label: Troubleshooting an issue
+        - label: Clarification of documentation
+        - label: Best practices / recommendations

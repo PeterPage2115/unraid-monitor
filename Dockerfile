@@ -32,7 +32,10 @@ LABEL description="Discord monitoring bot for Unraid servers"
 LABEL version="1.0.0"
 
 # Create non-root user
-RUN adduser -D -u 1000 appuser
+# Note: Alpine has 'ping' group at GID 999, we'll add user to it for docker.sock access
+# In docker-compose, ensure docker.sock has GID 999 or adjust group membership
+RUN adduser -D -u 1000 appuser && \
+    addgroup appuser ping
 
 # Set working directory
 WORKDIR /app
@@ -43,6 +46,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application code
 COPY --chown=appuser:appuser src/ ./src/
+COPY --chown=appuser:appuser generate_password.py ./generate_password.py
 
 # Copy default config
 COPY --chown=appuser:appuser config/settings.yaml ./config/settings.yaml
@@ -59,8 +63,10 @@ ENV HOST_PROC=/host/proc
 ENV HOST_SYS=/host/sys
 ENV TZ=Europe/Warsaw
 
-# Note: Running as root for Docker socket access
-# This is standard for Unraid containers that need Docker monitoring
+# Switch to non-root user
+# Container runs as appuser (UID 1000) with ping group (GID 999) membership
+# For docker.sock access: ensure socket has GID 999 or use --group-add in docker-compose
+USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
