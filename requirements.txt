@@ -3,8 +3,8 @@
 # Web UI
 fastapi==0.115.6
 uvicorn[standard]==0.32.1
-jinja2==3.1.5
-python-multipart==0.0.20
+jinja2==3.1.6
+python-multipart==0.0.21
 
 # Async scheduler (stable version)
 apscheduler==3.11.2
@@ -16,17 +16,17 @@ psutil==6.1.1
 docker==7.1.0
 
 # Async HTTP client
-aiohttp==3.11.11
+aiohttp==3.13.3
 
 # Configuration
-pyyaml==6.0.2
+pyyaml==6.0.3
 
 # Timezone support
-tzlocal==5.2
+tzlocal==5.3.1
 
 # Password hashing
 passlib[bcrypt]==1.7.4
 bcrypt==4.2.1  # passlib 1.7.4 requires bcrypt <5.0
 
 # Database
-sqlalchemy==2.0.36
+sqlalchemy==2.0.45

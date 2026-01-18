@@ -383,7 +383,7 @@ async def main() -> None:
     setup_logging(config)
     
     logger.info("=" * 60)
-    logger.info("Unraid Monitor v1.1.2")
+    logger.info("Unraid Monitor v1.0.1")
     logger.info("=" * 60)
     logger.info(f"Timezone: {config.timezone}")
     logger.info(f"System check interval: {config.monitoring.system_interval_seconds}s")

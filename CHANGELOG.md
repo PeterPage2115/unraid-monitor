@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [1.0.1] - 2026-01-18
+
+### Security
+- Updated aiohttp from 3.11.11 to 3.13.3 to address security vulnerabilities:
+  - Fixed proxy authorization headers not being passed when reusing connections (407 errors)
+  - Fixed multipart reading failing when encountering empty body parts
+
+### Changed
+- Updated jinja2 from 3.1.5 to 3.1.6 (patch update)
+- Updated PyYAML from 6.0.2 to 6.0.3 (patch update)
+- Updated python-multipart from 0.0.20 to 0.0.21 (patch update)
+- Updated tzlocal from 5.2 to 5.3.1 (minor update)
+- Updated SQLAlchemy from 2.0.36 to 2.0.45 (patch updates)
+
+---
+
+## [1.0.0] - 2026-01-18
+
 ### Added
 - Project roadmap documentation (ROADMAP.md)
 - Implementation tracking document (TODO.md)

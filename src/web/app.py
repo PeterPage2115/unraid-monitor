@@ -126,7 +126,7 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
     app = FastAPI(
         title="Unraid Monitor",
         description="Web UI for Unraid server monitoring",
-        version="1.1.2",
+        version="1.0.1",
         lifespan=lifespan,
     )
     
@@ -363,7 +363,7 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
         return {
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
-            "version": "1.1.2",
+            "version": "1.0.1",
         }
     
     @app.get("/api/health")

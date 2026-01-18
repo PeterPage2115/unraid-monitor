@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 # Constants
 # =============================================================================
 
-VERSION = "1.1.2"
+VERSION = "1.0.1"
 
 
 class EmbedColor(Enum):
