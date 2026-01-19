@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.4] - 2026-01-19
+
+### Fixed
+- Web UI Services panel now correctly parses API response object (was expecting array)
+- Web UI Memory display now shows actual used/total values (was showing 0)
+- Web UI Uptime now displays correctly (added uptime_seconds to API response)
+- Services now show proper status with better formatting
+
+---
+
 ## [1.0.3] - 2026-01-19
 
 ### Added
