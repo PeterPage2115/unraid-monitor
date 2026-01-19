@@ -4,7 +4,7 @@ This file gives concise, actionable guidance for AI coding agents to be producti
 
 ## Quick context (big picture)
 - What it is: a Dockerized Discord monitoring bot for Unraid servers that collects host metrics, Docker/container status, and optional media-service stats, and posts alerts/reports to a Discord webhook.
-- Main runtime: Async Python using asyncio + aiohttp; scheduled tasks via APScheduler (AsyncScheduler).
+- Main runtime: Async Python using asyncio + aiohttp; scheduled tasks via APScheduler (AsyncIOScheduler, 3.x API).
 - Entry point: `src/main.py` (class `UnraidMonitor`) — initializes `DiscordClient`, `AlertManager`, monitors, and service clients.
 
 ## Key directories & files
