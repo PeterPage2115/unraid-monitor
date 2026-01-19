@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Disk alerts now respect configurable mount include/exclude lists
 - Web status now reports main disk usage percent
+- Disk monitoring defaults now target Unraid mounts (/mnt/user, /mnt/cache, /mnt/disk)
 
 ---
 

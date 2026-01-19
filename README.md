@@ -119,6 +119,8 @@ services:
       - /sys:/host/sys:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /mnt/user/appdata/unraid-monitor/data:/app/data
+      # Optional: mount Unraid disks for accurate disk monitoring
+      - /mnt:/mnt:ro
     logging:
       driver: json-file
       options:
@@ -126,11 +128,19 @@ services:
         max-file: "3"
 ```
 
-**Note on Docker Socket Permissions:**
+**Important Notes:**
+
+**Docker Socket Permissions:**
 The container runs as a non-root user (UID 1000) with docker group membership (GID 999). For Docker monitoring to work:
 - The Docker socket must be readable by the docker group
 - On most systems this is already configured: `ls -l /var/run/docker.sock` should show `srw-rw---- root docker`
 - If you encounter permission errors, ensure the socket has group read/write: `sudo chmod 660 /var/run/docker.sock`
+
+**Disk Monitoring on Unraid:**
+For accurate disk space monitoring of your Unraid array, mount `/mnt` into the container:
+- Without `/mnt` mount: Only system/cache disks visible (limited monitoring)
+- With `/mnt:/mnt:ro`: Full visibility of array disks (`/mnt/disk1`, `/mnt/disk2`, etc.)
+- The monitor automatically detects Unraid mount points: `/mnt/user`, `/mnt/cache`, `/mnt/disk*`
 
 ### 4. Run
 
@@ -154,6 +164,13 @@ Open `http://YOUR_UNRAID_IP:8888` in your browser.
 | RAM | 85% | 95% |
 | Disk | 80% | 95% |
 | Temperature | 75°C | 90°C |
+
+### Disk Monitoring
+Automatically monitors Unraid array disks with configurable filtering:
+- **Included by default**: `/mnt/user`, `/mnt/cache`, `/mnt/disk*` (Unraid array)
+- **Excluded by default**: `/boot` (system boot disk)
+- **Ignored filesystems**: `tmpfs`, `overlay`, `squashfs` (container internals)
+- Requires `/mnt:/mnt:ro` volume mount for full visibility
 
 ### Temperature Sensors
 By default, only **CPU (coretemp)** and **NVMe** sensors are monitored. Motherboard sensors (AUXTIN, SYSTIN) that often show incorrect values are filtered out.
