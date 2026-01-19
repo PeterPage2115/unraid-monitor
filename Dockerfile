@@ -29,7 +29,7 @@ FROM python:3.12-alpine
 # Labels
 LABEL maintainer="Unraid Monitor"
 LABEL description="Discord monitoring bot for Unraid servers"
-LABEL version="1.0.1"
+LABEL version="1.0.2"
 
 # Create non-root user
 # Note: Alpine has 'ping' group at GID 999, we'll add user to it for docker.sock access

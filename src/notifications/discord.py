@@ -16,15 +16,14 @@ import aiohttp
 
 from .base import NotificationProvider, Alert, Report, AlertLevel
 
+# Import version from package root
+try:
+    from __init__ import __version__ as VERSION
+except ImportError:
+    VERSION = "1.0.2"  # Fallback
+
 
 logger = logging.getLogger(__name__)
-
-
-# =============================================================================
-# Constants
-# =============================================================================
-
-VERSION = "1.0.1"
 
 
 class EmbedColor(Enum):

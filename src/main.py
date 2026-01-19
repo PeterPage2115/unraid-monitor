@@ -20,6 +20,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+# Import version from package root
+try:
+    from __init__ import __version__
+except ImportError:
+    __version__ = "1.0.2"  # Fallback
+
 # APScheduler imports (stable 3.x)
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
@@ -383,7 +389,7 @@ async def main() -> None:
     setup_logging(config)
     
     logger.info("=" * 60)
-    logger.info("Unraid Monitor v1.0.1")
+    logger.info(f"Unraid Monitor v{__version__}")
     logger.info("=" * 60)
     logger.info(f"Timezone: {config.timezone}")
     logger.info(f"System check interval: {config.monitoring.system_interval_seconds}s")

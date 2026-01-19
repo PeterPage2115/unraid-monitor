@@ -8,5 +8,5 @@ A Discord monitoring bot for Unraid servers that provides:
 - Intelligent alerting with cooldown and recovery notifications
 """
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __author__ = "Unraid Monitor"

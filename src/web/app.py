@@ -25,6 +25,11 @@ if TYPE_CHECKING:
     from database import Database
     from notifications import NotificationProvider
 
+# Import version from package root
+try:
+    from __init__ import __version__
+except ImportError:
+    __version__ = "1.0.2"  # Fallback
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +131,7 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
     app = FastAPI(
         title="Unraid Monitor",
         description="Web UI for Unraid server monitoring",
-        version="1.0.1",
+        version=__version__,
         lifespan=lifespan,
     )
     
@@ -363,7 +368,7 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
         return {
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
-            "version": "1.0.1",
+            "version": __version__,
         }
     
     @app.get("/api/health")
