@@ -38,6 +38,7 @@ data/
 # Internal documentation (not for GitHub)
 TODO.md
 SECURITY_AUDIT.md
+.github/copilot-instructions.md
 
 # OS
 .DS_Store
