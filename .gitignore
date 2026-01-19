@@ -35,6 +35,10 @@ htmlcov/
 data/
 *.log
 
+# Internal documentation (not for GitHub)
+TODO.md
+SECURITY_AUDIT.md
+
 # OS
 .DS_Store
 Thumbs.db
