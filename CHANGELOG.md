@@ -9,13 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [1.0.3] - 2026-01-19
+
 ### Added
 - Disk monitoring configuration (include/exclude mounts, ignore filesystem types)
+- Web UI Storage card showing all monitored disks with progress bars
+- Documentation for Unraid disk mount structure
 
 ### Changed
 - Disk alerts now respect configurable mount include/exclude lists
-- Web status now reports main disk usage percent
-- Disk monitoring defaults now target Unraid mounts (/mnt/user, /mnt/cache, /mnt/disk)
+- Disk monitoring defaults now target Unraid mounts (/mnt/user, /mnt/cache, /mnt/disk*)
+- Web UI now displays disk list dynamically instead of single storage metric
+- README updated with disk monitoring requirements and /mnt mount explanation
+
+### Fixed
+- Web UI authentication now properly handles missing password configuration
+- HTTPBasic auth set to auto_error=False for optional authentication
 
 ---
 

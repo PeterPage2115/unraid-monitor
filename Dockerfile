@@ -29,6 +29,7 @@ FROM python:3.12-alpine
 # Labels
 LABEL maintainer="Unraid Monitor"
 LABEL description="Discord monitoring bot for Unraid servers"
+LABEL version="1.0.3"
 LABEL version="1.0.2"
 
 # Create non-root user
