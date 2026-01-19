@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # HTTP Basic Auth
-security = HTTPBasic()
+security = HTTPBasic(auto_error=False)
 
 # Path to templates directory
 TEMPLATES_DIR = Path(__file__).parent / "templates"
@@ -152,7 +152,7 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
         return app.state.web_ui
     
     def verify_auth(
-        credentials: HTTPBasicCredentials = Depends(security),
+        credentials: HTTPBasicCredentials | None = Depends(security),
         ui: WebUI = Depends(get_web_ui)
     ) -> bool:
         """
@@ -165,6 +165,13 @@ def create_app(web_ui: WebUI = None) -> FastAPI:
         if not ui.password:
             return True
         
+        if credentials is None:
+            raise HTTPException(
+                status_code=401,
+                detail="Missing credentials",
+                headers={"WWW-Authenticate": "Basic"},
+            )
+
         # Verify password hash
         is_valid = pwd_context.verify(credentials.password, ui.password)
         

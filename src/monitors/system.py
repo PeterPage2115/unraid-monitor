@@ -170,6 +170,9 @@ class SystemMonitor(BaseMonitor):
                 if partition.fstype in disk_config.ignore_fstypes:
                     continue
 
+                if not self._is_included_mount(partition.mountpoint):
+                    continue
+
                 if self._is_excluded_mount(partition.mountpoint):
                     continue
                 
@@ -212,6 +215,13 @@ class SystemMonitor(BaseMonitor):
                 logger.debug(f"Error checking disk {partition.mountpoint}: {e}")
         
         return disks
+
+    def _is_included_mount(self, mountpoint: str) -> bool:
+        """Check if mountpoint should be included in disk checks."""
+        include_mounts = self.config.disk_monitoring.include_mounts
+        if not include_mounts:
+            return True
+        return any(mountpoint.startswith(m) for m in include_mounts)
 
     def _is_excluded_mount(self, mountpoint: str) -> bool:
         """Check if mountpoint should be excluded from disk checks."""

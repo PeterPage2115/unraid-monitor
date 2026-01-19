@@ -338,12 +338,6 @@
                 <div class="progress-bar"><div class="progress-fill good" id="ram-bar" style="width: 0%"></div></div>
                 
                 <div class="metric">
-                    <span class="metric-name">Storage</span>
-                    <span class="metric-value" id="disk-value">--%</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill good" id="disk-bar" style="width: 0%"></div></div>
-                
-                <div class="metric">
                     <span class="metric-name">Temperature</span>
                     <span class="metric-value" id="temp-value">--°C</span>
                 </div>
@@ -351,6 +345,19 @@
                 <div class="metric">
                     <span class="metric-name">Uptime</span>
                     <span class="metric-value" id="uptime-value">--</span>
+                </div>
+            </div>
+
+            <!-- Storage Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Storage</h2>
+                    <span class="card-icon">💾</span>
+                </div>
+                <div id="storage-list">
+                    <div class="metric">
+                        <span class="metric-name">Loading...</span>
+                    </div>
                 </div>
             </div>
             
@@ -502,11 +509,26 @@
                     document.getElementById('ram-bar').style.width = ram + '%';
                     document.getElementById('ram-bar').className = 'progress-fill ' + getProgressClass(ram);
                     
-                    // Disk
-                    const disk = s.disk_percent || 0;
-                    document.getElementById('disk-value').textContent = disk.toFixed(1) + '%';
-                    document.getElementById('disk-bar').style.width = disk + '%';
-                    document.getElementById('disk-bar').className = 'progress-fill ' + getProgressClass(disk);
+                    // Disks
+                    if (s.disks && s.disks.length > 0) {
+                        const list = document.getElementById('storage-list');
+                        list.innerHTML = s.disks.map(d => {
+                            const percent = d.percent || 0;
+                            const total = (d.total_bytes / (1024**3)).toFixed(0);
+                            const used = (d.used_bytes / (1024**3)).toFixed(0);
+                            return `
+                                <div style="margin-bottom: 15px;">
+                                    <div class="metric" style="border: none; padding: 5px 0;">
+                                        <span class="metric-name" title="${d.mountpoint}">${d.mountpoint}</span>
+                                        <span class="metric-value">${percent}% <span style="font-size: 0.6em; color: var(--text-secondary); font-weight: 400;">(${used}/${total} GB)</span></span>
+                                    </div>
+                                    <div class="progress-bar"><div class="progress-fill ${getProgressClass(percent)}" style="width: ${percent}%"></div></div>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        document.getElementById('storage-list').innerHTML = '<div class="metric"><span class="metric-name">No disks found</span></div>';
+                    }
                     
                     // Temp
                     if (s.cpu_temp) {

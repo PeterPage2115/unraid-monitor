@@ -33,7 +33,7 @@ DEFAULT_CONFIG = {
         "services_interval_seconds": 3600,
     },
     "disk_monitoring": {
-        "include_mounts": ["/", "/mnt/user", "/mnt/cache"],
+        "include_mounts": ["/mnt/user", "/mnt/cache", "/mnt/disk"],
         "exclude_mounts": ["/boot"],
         "ignore_fstypes": ["squashfs", "tmpfs", "devtmpfs", "overlay"],
     },
@@ -111,7 +111,7 @@ class MonitoringConfig:
 @dataclass
 class DiskMonitoringConfig:
     """Disk monitoring configuration."""
-    include_mounts: list[str] = field(default_factory=lambda: ["/", "/mnt/user", "/mnt/cache"])
+    include_mounts: list[str] = field(default_factory=lambda: ["/mnt/user", "/mnt/cache", "/mnt/disk"])
     exclude_mounts: list[str] = field(default_factory=lambda: ["/boot"])
     ignore_fstypes: list[str] = field(default_factory=lambda: ["squashfs", "tmpfs", "devtmpfs", "overlay"])
 

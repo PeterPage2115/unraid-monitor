@@ -17,9 +17,9 @@ monitoring:
 disk_monitoring:
   # Mount points to include for disk alerts
   include_mounts:
-    - /
     - /mnt/user
     - /mnt/cache
+    - /mnt/disk
 
   # Mount points to exclude entirely from disk checks
   exclude_mounts:
