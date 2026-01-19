@@ -1,6 +1,6 @@
 # Unraid Monitor — Development Roadmap
 
-**Last Updated**: January 17, 2026  
+**Last Updated**: January 19, 2026  
 **Current Version**: Pre-1.0 (Development)  
 **Project Focus**: Homelab-first, Community-driven Discord monitoring for Unraid servers
 
@@ -29,19 +29,19 @@ Unraid Monitor aims to be **the best monitoring solution for Unraid homelab user
 **Unraid Support**: 7.0+ (latest stable: 7.2.3)
 
 #### Critical Fixes
-- [ ] **APScheduler Dependency** — Downgrade to `3.10.4` stable or document alpha risks
-- [ ] **Password Hashing** — Replace plain-text comparison with `passlib[bcrypt]`
-- [ ] **Pin Dependencies** — Use `==` versions in requirements.txt for stability
-- [ ] **Docker Non-Root** — Use docker group (GID 999) instead of running as root
+- [x] **APScheduler Dependency** — Migrated to `3.11.2` stable (AsyncIOScheduler 3.x API)
+- [x] **Password Hashing** — Implemented `passlib[bcrypt]` with HTTP Basic Auth
+- [x] **Pin Dependencies** — All versions pinned with `==` in requirements.txt
+- [x] **Docker Non-Root** — Running as `appuser` (UID 1000) with docker group (GID 999)
 
 #### Community Infrastructure
-- [ ] `CONTRIBUTING.md` — How to contribute (issues, PRs, code style)
-- [ ] `CHANGELOG.md` — Version tracking with Keep a Changelog format
-- [ ] `SECURITY.md` — Vulnerability disclosure policy
-- [ ] `.github/ISSUE_TEMPLATE/` — Bug report, feature request, question templates
-- [ ] `.github/PULL_REQUEST_TEMPLATE.md` — PR checklist
-- [ ] Discord Server — #announcements, #support, #development, #showcase channels
-- [ ] Ko-fi / GitHub Sponsors — Optional donation links (discreet, no nagging)
+- [x] `CONTRIBUTING.md` — Code style, PR process, code of conduct
+- [x] `CHANGELOG.md` — Version tracking with Keep a Changelog format
+- [x] `SECURITY.md` — Vulnerability disclosure policy
+- [x] `.github/ISSUE_TEMPLATE/` — Bug report, feature request, question templates
+- [x] `.github/PULL_REQUEST_TEMPLATE.md` — PR checklist
+- [ ] Discord Server — Community support channels (planned)
+- [ ] Ko-fi / GitHub Sponsors — Donation setup (planned)
 
 #### Release v1.0.0
 - [ ] Create git tag `v1.0.0` with release notes
