@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Disk monitoring configuration (include/exclude mounts, ignore filesystem types)
+
+### Changed
+- Disk alerts now respect configurable mount include/exclude lists
+- Web status now reports main disk usage percent
+
+---
+
+## [1.0.2] - 2026-01-19
+
+### Changed
+- Centralized application version in `src/__init__.py`
+- All modules now import `__version__` from the package root
+- Updated Dockerfile LABEL version to 1.0.2
+
+### Removed
+- Internal-only docs from repo tracking (TODO.md, SECURITY_AUDIT.md, copilot-instructions)
+
 ---
 
 ## [1.0.1] - 2026-01-18
@@ -171,5 +190,6 @@ Breaking changes will:
 
 ---
 
-[Unreleased]: https://github.com/peterpage2115/unraid-monitor/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/peterpage2115/unraid-monitor/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/peterpage2115/unraid-monitor/releases/tag/v1.0.2
 [1.0.0]: https://github.com/peterpage2115/unraid-monitor/releases/tag/v1.0.0

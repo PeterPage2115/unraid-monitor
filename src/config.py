@@ -32,6 +32,11 @@ DEFAULT_CONFIG = {
         "docker_interval_seconds": 60,
         "services_interval_seconds": 3600,
     },
+    "disk_monitoring": {
+        "include_mounts": ["/", "/mnt/user", "/mnt/cache"],
+        "exclude_mounts": ["/boot"],
+        "ignore_fstypes": ["squashfs", "tmpfs", "devtmpfs", "overlay"],
+    },
     "thresholds": {
         "cpu": {"warning": 80, "critical": 95},
         "memory": {"warning": 85, "critical": 95},
@@ -101,6 +106,14 @@ class MonitoringConfig:
     system_interval_seconds: int = 300
     docker_interval_seconds: int = 60
     services_interval_seconds: int = 3600
+
+
+@dataclass
+class DiskMonitoringConfig:
+    """Disk monitoring configuration."""
+    include_mounts: list[str] = field(default_factory=lambda: ["/", "/mnt/user", "/mnt/cache"])
+    exclude_mounts: list[str] = field(default_factory=lambda: ["/boot"])
+    ignore_fstypes: list[str] = field(default_factory=lambda: ["squashfs", "tmpfs", "devtmpfs", "overlay"])
 
 
 @dataclass
@@ -192,6 +205,7 @@ class Config:
     
     # Sub-configurations
     monitoring: MonitoringConfig = field(default_factory=MonitoringConfig)
+    disk_monitoring: DiskMonitoringConfig = field(default_factory=DiskMonitoringConfig)
     thresholds: ThresholdsConfig = field(default_factory=lambda: ThresholdsConfig.from_dict({}))
     alerts: AlertsConfig = field(default_factory=AlertsConfig)
     weekly_report: WeeklyReportConfig = field(default_factory=WeeklyReportConfig)
@@ -323,6 +337,7 @@ def load_config(config_dir: Path | str | None = None) -> Config:
         discord_report_channel_id=os.getenv("DISCORD_REPORT_CHANNEL_ID", ""),
         timezone=os.getenv("TZ", "Europe/Warsaw"),
         monitoring=MonitoringConfig(**merged_config.get("monitoring", {})),
+        disk_monitoring=DiskMonitoringConfig(**merged_config.get("disk_monitoring", {})),
         thresholds=ThresholdsConfig.from_dict(merged_config.get("thresholds", {})),
         alerts=AlertsConfig(**merged_config.get("alerts", {})),
         weekly_report=WeeklyReportConfig(**merged_config.get("weekly_report", {})),

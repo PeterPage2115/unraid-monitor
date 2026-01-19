@@ -159,6 +159,7 @@ class SystemMonitor(BaseMonitor):
     async def _check_disks(self) -> list[dict[str, Any]]:
         """Check disk usage for all mounted partitions."""
         disks = []
+        disk_config = self.config.disk_monitoring
         
         # Get all disk partitions
         partitions = psutil.disk_partitions(all=False)
@@ -166,7 +167,10 @@ class SystemMonitor(BaseMonitor):
         for partition in partitions:
             try:
                 # Skip special filesystems
-                if partition.fstype in ("squashfs", "tmpfs", "devtmpfs", "overlay"):
+                if partition.fstype in disk_config.ignore_fstypes:
+                    continue
+
+                if self._is_excluded_mount(partition.mountpoint):
                     continue
                 
                 usage = psutil.disk_usage(partition.mountpoint)
@@ -182,14 +186,7 @@ class SystemMonitor(BaseMonitor):
                 }
                 disks.append(disk_data)
                 
-                # Only alert for important mount points
-                important_mounts = ["/", "/mnt/user", "/mnt/cache"]
-                should_alert = any(
-                    partition.mountpoint.startswith(m) 
-                    for m in important_mounts
-                )
-                
-                if should_alert:
+                if self._should_alert_mount(partition.mountpoint):
                     # Create metric ID from mountpoint
                     metric_id = partition.mountpoint.replace("/", "_").strip("_") or "root"
                     
@@ -215,6 +212,24 @@ class SystemMonitor(BaseMonitor):
                 logger.debug(f"Error checking disk {partition.mountpoint}: {e}")
         
         return disks
+
+    def _is_excluded_mount(self, mountpoint: str) -> bool:
+        """Check if mountpoint should be excluded from disk checks."""
+        for excluded in self.config.disk_monitoring.exclude_mounts:
+            if mountpoint.startswith(excluded):
+                return True
+        return False
+
+    def _should_alert_mount(self, mountpoint: str) -> bool:
+        """Check if mountpoint should trigger disk alerts."""
+        if self._is_excluded_mount(mountpoint):
+            return False
+
+        include_mounts = self.config.disk_monitoring.include_mounts
+        if not include_mounts:
+            return True
+
+        return any(mountpoint.startswith(m) for m in include_mounts)
     
     def _should_monitor_sensor(self, sensor_name: str, label: str) -> bool:
         """
@@ -328,11 +343,12 @@ class SystemMonitor(BaseMonitor):
         )
         
         # All disk info for detailed view
+        excluded_mounts = self.config.disk_monitoring.exclude_mounts + ["/"]
         all_disks = []
         for disk in current.get("disks", []):
             mount = disk.get("mountpoint", "")
-            # Skip unraid system mounts
-            if mount.startswith("/boot") or mount == "/":
+            # Skip excluded system mounts
+            if any(mount.startswith(excluded) for excluded in excluded_mounts):
                 continue
             all_disks.append({
                 "mount": mount,

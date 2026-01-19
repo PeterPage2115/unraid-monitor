@@ -1,7 +1,7 @@
 # Unraid Monitor — Development Roadmap
 
 **Last Updated**: January 19, 2026  
-**Current Version**: Pre-1.0 (Development)  
+**Current Version**: 1.0.2  
 **Project Focus**: Homelab-first, Community-driven Discord monitoring for Unraid servers
 
 ---
@@ -77,6 +77,9 @@ Unraid Monitor aims to be **the best monitoring solution for Unraid homelab user
 - [ ] Implement retention policy: delete data older than 30 days (nightly cleanup job)
 - [ ] Add API endpoint: `GET /api/metrics/history?name=cpu_percent&hours=24`
 - [ ] Display Chart.js line charts in dashboard (24h CPU/RAM/disk trends)
+
+#### Monitoring Enhancements
+- [x] Disk space monitoring (alerts + report)
 
 #### Array Status Monitoring
 - [ ] Implement `get_array_status()` in `src/monitors/system.py`

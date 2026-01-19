@@ -12,6 +12,27 @@ monitoring:
   services_interval_seconds: 3600  # 1 hour
 
 # =============================================================================
+# Disk monitoring
+# =============================================================================
+disk_monitoring:
+  # Mount points to include for disk alerts
+  include_mounts:
+    - /
+    - /mnt/user
+    - /mnt/cache
+
+  # Mount points to exclude entirely from disk checks
+  exclude_mounts:
+    - /boot
+
+  # Filesystem types to ignore
+  ignore_fstypes:
+    - squashfs
+    - tmpfs
+    - devtmpfs
+    - overlay
+
+# =============================================================================
 # Alert thresholds
 # Values are in percent (%) for CPU, RAM, Disk
 # Temperature is in Celsius (°C)

@@ -150,13 +150,20 @@ class UnraidMonitor:
             stats = self.system_monitor.get_last_data()
             if not stats:
                 stats = await self.system_monitor.check()
+
+            disks = stats.get("disks", [])
+            main_disk = next(
+                (d for d in disks if d.get("mountpoint") == "/mnt/user"),
+                disks[0] if disks else {}
+            )
             
             return {
                 "cpu_percent": stats.get("cpu", {}).get("percent", 0),
                 "memory_percent": stats.get("memory", {}).get("percent", 0),
                 "memory_used": stats.get("memory", {}).get("used", 0),
                 "memory_total": stats.get("memory", {}).get("total", 0),
-                "disks": stats.get("disks", []),
+                "disk_percent": main_disk.get("percent", 0),
+                "disks": disks,
                 "temperatures": stats.get("temperatures", {}),
                 "timestamp": stats.get("timestamp", ""),
             }
