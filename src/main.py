@@ -157,14 +157,23 @@ class UnraidMonitor:
                 disks[0] if disks else {}
             )
             
+            # Calculate uptime
+            try:
+                import psutil
+                boot_time = psutil.boot_time()
+                uptime_seconds = datetime.now().timestamp() - boot_time
+            except Exception:
+                uptime_seconds = 0
+            
             return {
                 "cpu_percent": stats.get("cpu", {}).get("percent", 0),
                 "memory_percent": stats.get("memory", {}).get("percent", 0),
-                "memory_used": stats.get("memory", {}).get("used", 0),
-                "memory_total": stats.get("memory", {}).get("total", 0),
+                "memory_used": stats.get("memory", {}).get("used_bytes", 0),
+                "memory_total": stats.get("memory", {}).get("total_bytes", 0),
                 "disk_percent": main_disk.get("percent", 0),
                 "disks": disks,
                 "temperatures": stats.get("temperatures", {}),
+                "uptime_seconds": uptime_seconds,
                 "timestamp": stats.get("timestamp", ""),
             }
         except Exception as e:
